@@ -61,10 +61,6 @@ public class ProductController {
 		return productService.updateProduct(product);
 	}
 	
-	@PostMapping("/employee")
-	public Employee addEmployee(@RequestBody Employee employee) {
-		return employeeRepo.save(employee);
-	}
 	
 	@GetMapping("/productName/{productName}")
 	public Product getProductByProductName(@PathVariable String productName) {
