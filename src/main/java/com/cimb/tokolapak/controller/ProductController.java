@@ -27,6 +27,12 @@ public class ProductController {
 //		price: 25000
 //	})
 	
+	// localhost:8080
+	// const API_URL = localhost:8080
+	// Axios.post(API_URL + "/products")
+	
+	// localhost:8080/products
+	
 	@Autowired
 	private ProductRepo productRepo;
 	
