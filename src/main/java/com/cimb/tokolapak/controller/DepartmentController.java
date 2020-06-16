@@ -37,6 +37,16 @@ public class DepartmentController {
 		return departmentService.addDepartment(department);
 	}
 	
+	@DeleteMapping("/{departmentId}")
+	public void deleteDepartment(@PathVariable int departmentId) {
+		Department findDepartment = departmentRepo.findById(departmentId).get();
+		
+		findDepartment.getEmployees().forEach(employee -> {
+			employee.setDepartment(null);
+			employeeRepo.save(employee);
+		});
+	}
+	
 //	@DeleteMapping("/{departmentId}")
 //	public void deleteDepartment(@PathVariable int departmentId) {
 //		// find employee yang memiliki departmentID tsbt

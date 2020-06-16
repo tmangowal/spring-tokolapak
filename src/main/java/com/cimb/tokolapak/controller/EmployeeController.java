@@ -16,13 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cimb.tokolapak.dao.DepartmentRepo;
 import com.cimb.tokolapak.dao.EmployeeAddressRepo;
 import com.cimb.tokolapak.dao.EmployeeRepo;
+import com.cimb.tokolapak.dao.ProjectRepo;
 import com.cimb.tokolapak.entity.Department;
 import com.cimb.tokolapak.entity.Employee;
 import com.cimb.tokolapak.entity.EmployeeAddress;
+import com.cimb.tokolapak.entity.Project;
 import com.cimb.tokolapak.service.EmployeeService;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping("/employees")
 @CrossOrigin
 public class EmployeeController {
 	
@@ -38,6 +40,9 @@ public class EmployeeController {
 	@Autowired
 	private DepartmentRepo departmentRepo;
 	
+	@Autowired
+	private ProjectRepo projectRepo;
+	
 	@PostMapping("/department/{departmentId}")
 	public Employee addEmployee(@RequestBody Employee employee, @PathVariable int departmentId) {
 		Department findDepartment = departmentRepo.findById(departmentId).get();
@@ -48,6 +53,17 @@ public class EmployeeController {
 		employee.setDepartment(findDepartment);
 		
 		return employeeRepo.save(employee);
+	}
+	
+	@PostMapping("/{employeeId}/projects/{projectId}")
+	public Employee addProjectToEmployee(@PathVariable int employeeId, @PathVariable int projectId) {
+		Employee findEmployee = employeeRepo.findById(employeeId).get();
+		
+		Project findProject = projectRepo.findById(projectId).get();
+		
+		findEmployee.getProjects().add(findProject);
+		
+		return employeeRepo.save(findEmployee);
 	}
 	
 	@GetMapping
