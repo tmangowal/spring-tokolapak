@@ -6,10 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +28,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cimb.tokolapak.dao.UserRepo;
 import com.cimb.tokolapak.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @RestController
@@ -39,17 +42,23 @@ public class DocumentController {
 	
 	// C://Documents/Projects/Spring/Purwadhika/tokolapak/src/main/resources/static/images/
 	
+	@Autowired
+	private UserRepo userRepo;
+	
 	@GetMapping("/testing")
 	public void testing() {
 		System.out.println(uploadPath);
 	}
 
 	@PostMapping
-	public String uploadFile(@RequestParam("file") MultipartFile file) {
+	public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userData") String userString) throws JsonMappingException, JsonProcessingException {
 		Date date = new Date();
+	
+		User user = new ObjectMapper().readValue(userString, User.class);
+		
+		// Register / POST user ke database, beserta dengan link ke profile Picture
 		
 		String fileExtension = file.getContentType().split("/")[1];
-		System.out.println(fileExtension);
 		String newFileName = "PROD-" + date.getTime() + "." + fileExtension;
 		
 		// Get file's original name || can generate our own
@@ -67,10 +76,24 @@ public class DocumentController {
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/documents/download/")
 				.path(fileName).toUriString();
 		
+		user.setProfilePicture(fileDownloadUri);
+		
+		userRepo.save(user);
+		
 		// http://localhost:8080/documents/download/PROD-123456.jpg
 		
 		return fileDownloadUri;
 	}
+	
+	@PostMapping("/login/{username}")
+	public User loginWithProfilePicture(@RequestBody User user) {
+		return userRepo.findByUsername(user.getUsername()).get();
+	}
+	
+	/*
+	 * Axios.post(API/documents, file)
+	 * .then(res => { window.open(res.data) })
+	 * */
 
 	@GetMapping("/download/{fileName:.+}")
 	public ResponseEntity<Object> downloadFile(@PathVariable String fileName) {

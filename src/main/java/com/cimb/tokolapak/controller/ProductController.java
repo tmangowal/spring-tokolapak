@@ -18,7 +18,6 @@ import com.cimb.tokolapak.entity.Product;
 import com.cimb.tokolapak.service.ProductService;
 
 @RestController
-@RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
 	
