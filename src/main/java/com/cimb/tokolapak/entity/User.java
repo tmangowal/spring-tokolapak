@@ -20,6 +20,10 @@ public class User {
 	
 	private String profilePicture;
 	
+	private String email;
+	
+	private boolean isVerified;
+	
 	public int getId() {
 		return id;
 	}
