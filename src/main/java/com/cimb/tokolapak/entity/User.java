@@ -1,5 +1,7 @@
 package com.cimb.tokolapak.entity;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +26,8 @@ public class User {
 	
 	private boolean isVerified;
 	
+	private String verifyToken;
+	
 	public int getId() {
 		return id;
 	}
@@ -47,6 +51,24 @@ public class User {
 	}
 	public void setProfilePicture(String profilePicture) {
 		this.profilePicture = profilePicture;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public boolean isVerified() {
+		return isVerified;
+	}
+	public void setVerified(boolean isVerified) {
+		this.isVerified = isVerified;
+	}
+	public String getVerifyToken() {
+		return verifyToken;
+	}
+	public void setVerifyToken(String verifyToken) {
+		this.verifyToken = verifyToken;
 	}
 	@Override
 	public String toString() {

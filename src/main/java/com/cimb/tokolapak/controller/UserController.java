@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +40,25 @@ public class UserController {
 //			throw new RuntimeException("Username exists!");
 //		}
 		String encodedPassword = pwEncoder.encode(user.getPassword());
+		String verifyToken = pwEncoder.encode(user.getUsername() + user.getEmail());
+		
 		user.setPassword(encodedPassword);
+		user.setVerified(false);
+		// Simpan verifyToken di database
+		user.setVerifyToken(verifyToken);
 		
 		User savedUser = userRepo.save(user);
 		savedUser.setPassword(null);
+		
+		// Kirim verifyToken si user ke emailnya user
+		String linkToVerify = "http://localhost:8080/users/verify/" + user.getUsername() + "?token=" + verifyToken;
+		
+		String message = "<h1>Selamat! Registrasi Berhasil</h1>\n";
+		message += "Akun dengan username " + user.getUsername() + " telah terdaftar!\n";
+		message += "Klik <a href=\"" + linkToVerify + "\">link ini</a> untuk verifikasi email anda.";
+		
+		
+		emailUtil.sendEmail(user.getEmail(), "Registrasi Akun", message);
 		
 		return savedUser;
 	}
@@ -77,5 +93,20 @@ public class UserController {
 	public String sendEmailTesting() {
 		this.emailUtil.sendEmail("thedevmango@gmail.com", "Testing Spring Mail", "<h1>Hey there</h1> \nApa Kabar?");
 		return "Email Sent!";
+	}
+	
+	@GetMapping("/verify/{username}")
+	public String verifyUserEmail (@PathVariable String username, @RequestParam String token) {
+		User findUser = userRepo.findByUsername(username).get();
+		
+		if (findUser.getVerifyToken().equals(token)) {
+			findUser.setVerified(true);
+		} else {
+			throw new RuntimeException("Token is invalid");
+		}
+		
+		userRepo.save(findUser);
+		
+		return "Sukses!";
 	}
 }
