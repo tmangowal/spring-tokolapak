@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cimb.tokolapak.dao.EmployeeRepo;
 import com.cimb.tokolapak.dao.ProjectRepo;
 import com.cimb.tokolapak.entity.Employee;
 import com.cimb.tokolapak.entity.Project;
@@ -23,6 +24,9 @@ public class ProjectController {
 	
 	@Autowired
 	private ProjectRepo projectRepo;
+	
+	@Autowired
+	private EmployeeRepo employeeRepo;
 	
 	@GetMapping 
 	public Iterable<Project> getAllProjects() {
@@ -56,15 +60,15 @@ public class ProjectController {
 		Project findProject = projectRepo.findById(projectId).get();
 		
 		findProject.getEmployees().forEach(employee -> {
-			employee.setProjects(null);
+			List<Project> employeeProjects = employee.getProjects();
+			employeeProjects.remove(findProject);
+			employeeRepo.save(employee);
 		});
 		
 		findProject.setEmployees(null);
 		
-//		System.out.println(findProject.getEmployees());
-		
-//		findProject.setEmployees(null);
-		projectRepo.delete(findProject);
+//		projectRepo.save(findProject);
+		projectRepo.deleteById(projectId);
 	}
 	
 }
