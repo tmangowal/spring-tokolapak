@@ -23,7 +23,7 @@ public class Project {
 	
 	private String name;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinTable(name = "project_employee", joinColumns = @JoinColumn(name = "project_id"),
 			inverseJoinColumns = @JoinColumn(name = "employee_id"))

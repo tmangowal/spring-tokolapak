@@ -45,6 +45,10 @@ public class DepartmentController {
 			employee.setDepartment(null);
 			employeeRepo.save(employee);
 		});
+		
+		findDepartment.setEmployees(null);
+		
+		departmentRepo.deleteById(departmentId);
 	}
 	
 //	@DeleteMapping("/{departmentId}")

@@ -39,7 +39,7 @@ public class Employee {
 	@JoinColumn(name = "department_id")
 	private Department department;
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinTable(name = "project_employee", joinColumns = @JoinColumn(name = "employee_id"),
 			inverseJoinColumns = @JoinColumn(name = "project_id"))

@@ -68,6 +68,7 @@ public class EmployeeController {
 		Project findProject = projectRepo.findById(projectId).get();
 		
 		findEmployee.getProjects().add(findProject);
+//		findProject.getEmployees().add(findEmployee);
 		
 		return employeeRepo.save(findEmployee);
 	}
@@ -84,7 +85,9 @@ public class EmployeeController {
 		if (findEmployee == null)
 			throw new RuntimeException("Employee not found");
 		
+//		employeeAddressRepo.save(employeeAddress); tidak perlu karna pakai cascade PERSIST
 		findEmployee.setEmployeeAddress(employeeAddress);
+		
 		
 		return employeeRepo.save(findEmployee); 
 	}
